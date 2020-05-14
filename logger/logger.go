@@ -1,4 +1,4 @@
-package log
+package logger
 
 import (
 	"go.uber.org/zap"
@@ -6,17 +6,17 @@ import (
 	"os"
 )
 
-type ClientLogger struct {
+type Logger struct {
 	zapLogger *zap.Logger
 	baseLog   *log.Logger
 }
 
-// New creates a new ClientLogger Agent
-func NewLogAgent(zapLogger *zap.Logger) *ClientLogger {
-	return &ClientLogger{zapLogger: zapLogger, baseLog: log.New(os.Stderr, "", log.LstdFlags)}
+// New creates a new Logger Agent
+func NewLogAgent(zapLogger *zap.Logger) *Logger {
+	return &Logger{zapLogger: zapLogger, baseLog: log.New(os.Stderr, "", log.LstdFlags)}
 }
 
-func (log *ClientLogger) Debug(msg string) {
+func (log *Logger) Debug(msg string) {
 	if nil != log.zapLogger {
 		log.zapLogger.Debug(msg)
 	} else {
@@ -24,7 +24,7 @@ func (log *ClientLogger) Debug(msg string) {
 	}
 }
 
-func (log *ClientLogger) Info(msg string) {
+func (log *Logger) Info(msg string) {
 	if nil != log.zapLogger {
 		log.zapLogger.Info(msg)
 	} else {
@@ -32,7 +32,7 @@ func (log *ClientLogger) Info(msg string) {
 	}
 }
 
-func (log *ClientLogger) Warn(msg string) {
+func (log *Logger) Warn(msg string) {
 	if nil != log.zapLogger {
 		log.zapLogger.Warn(msg)
 	} else {
@@ -40,7 +40,7 @@ func (log *ClientLogger) Warn(msg string) {
 	}
 }
 
-func (log *ClientLogger) Error(msg string) {
+func (log *Logger) Error(msg string) {
 	if nil != log.zapLogger {
 		log.zapLogger.Error(msg)
 	} else {
@@ -48,7 +48,7 @@ func (log *ClientLogger) Error(msg string) {
 	}
 }
 
-func (log *ClientLogger) Panic(msg string) {
+func (log *Logger) Panic(msg string) {
 	if nil != log.zapLogger {
 		log.zapLogger.Panic(msg)
 	} else {
@@ -56,7 +56,7 @@ func (log *ClientLogger) Panic(msg string) {
 	}
 }
 
-func (log *ClientLogger) DPanic(msg string) {
+func (log *Logger) DPanic(msg string) {
 	if nil != log.zapLogger {
 		log.zapLogger.DPanic(msg)
 	} else {
@@ -64,7 +64,7 @@ func (log *ClientLogger) DPanic(msg string) {
 	}
 }
 
-func (log *ClientLogger) Fatal(msg string) {
+func (log *Logger) Fatal(msg string) {
 	if nil != log.zapLogger {
 		log.zapLogger.Fatal(msg)
 	} else {

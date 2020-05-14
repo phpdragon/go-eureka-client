@@ -7,6 +7,15 @@ import (
 	"time"
 )
 
+// Api for sending rest httpClient to eureka server
+func (client *Client) Api() (*core.EurekaServerApi, error) {
+	api, err := client.pickEurekaServerApi()
+	if err != nil {
+		return nil, err
+	}
+	return api, nil
+}
+
 func (client *Client) refreshRegistry() {
 	if !client.config.ClientConfig.FetchRegistry {
 		return
@@ -144,15 +153,6 @@ func (client *Client) updateInstanceStatus() (bool, error) {
 	client.logger.Info("The server status[UP] was updated successfully !")
 
 	return true, nil
-}
-
-// Api for sending rest httpClient to eureka server
-func (client *Client) Api() (*core.EurekaServerApi, error) {
-	api, err := client.pickEurekaServerApi()
-	if err != nil {
-		return nil, err
-	}
-	return api, nil
 }
 
 //TODO:

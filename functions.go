@@ -3,7 +3,6 @@ package eureka
 import (
 	"fmt"
 	"github.com/phpdragon/go-eurake-client/core"
-	"github.com/phpdragon/go-eurake-client/misc"
 	"net"
 	"strings"
 	"time"
@@ -63,14 +62,6 @@ func (client *Client) GetApplications() map[string]*core.Application {
 
 func (client *Client) GetInstances() map[string]map[int]*core.Instance {
 	return client.activeInstanceMap
-}
-
-func (client *Client) ActuatorStatus() interface{} {
-	return misc.ActuatorStatus(client.GetPort(), client.GetAppName())
-}
-
-func (client *Client) ActuatorHealth() interface{} {
-	return misc.ActuatorHealth()
 }
 
 func (client *Client) GetAppName() string {

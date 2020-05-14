@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/phpdragon/go-eurake-client/config"
 	"github.com/phpdragon/go-eurake-client/core"
-	"github.com/phpdragon/go-eurake-client/log"
+	"github.com/phpdragon/go-eurake-client/logger"
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
 	"os"
@@ -33,7 +33,7 @@ type Client struct {
 	signalChan chan os.Signal
 
 	//日志对象
-	logger *log.ClientLogger
+	logger *logger.Logger
 
 	mutex sync.RWMutex
 
@@ -75,7 +75,7 @@ func NewClientWithLog(configPath string, zapLog *zap.Logger) *Client {
 	client := &Client{
 		//自增器
 		autoInc:    atomic.NewInt64(0),
-		logger:     log.NewLogAgent(zapLog),
+		logger:     logger.NewLogAgent(zapLog),
 		signalChan: make(chan os.Signal),
 		//
 		config:   eurakeConfig,

@@ -1,4 +1,4 @@
-package misc
+package eureka
 
 import (
 	"strconv"
@@ -19,14 +19,14 @@ type health struct {
 type Details struct {
 }
 
-func ActuatorStatus(port int, appName string) interface{} {
+func (client *Client) ActuatorStatus() interface{} {
 	appStatus := status{}
-	appStatus.Name = appName
-	appStatus.Server.Port = strconv.Itoa(port)
+	appStatus.Name = client.config.InstanceConfig.AppName
+	appStatus.Server.Port = strconv.Itoa(client.GetPort())
 	return appStatus
 }
 
-func ActuatorHealth() interface{} {
+func (client *Client) ActuatorHealth() interface{} {
 	appHealth := health{}
 	appHealth.Status = "UP"
 	appHealth.Details = Details{}
