@@ -1,4 +1,4 @@
-package eureka
+package config
 
 import (
 	"bytes"
@@ -25,7 +25,7 @@ type inValid struct {
 }
 
 type (
-	Root struct {
+	AppConfig struct {
 		Server struct {
 			Port int `yaml:"port"`
 		} `yaml:"server"`
@@ -89,7 +89,7 @@ func LoadConfig(configPath string, valid bool) (*Config, error) {
 		return &Config{}, err
 	}
 
-	config := &Root{}
+	config := &AppConfig{}
 	if err = yaml.Unmarshal(file, config); err != nil {
 		return &Config{}, err
 	}
@@ -264,7 +264,7 @@ func NewDefaultInstance() *core.Instance {
 }
 
 //指示从eureka服务器获取注册表信息的频率,默认30秒
-func (config *ClientConfig) getRegistryFetchIntervalSeconds() int {
+func (config *ClientConfig) GetRegistryFetchIntervalSeconds() int {
 	if 0 >= config.RegistryFetchIntervalSeconds {
 		return 30
 	}

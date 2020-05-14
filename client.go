@@ -4,14 +4,14 @@ import (
 	"fmt"
 	core "github.com/phpdragon/go-eurake-client/core"
 	log "github.com/phpdragon/go-eurake-client/log"
-	netUtil "github.com/phpdragon/go-eurake-client/netutil"
+	config "github.com/phpdragon/go-eurake-client/config"
 	misc "github.com/phpdragon/go-eurake-client/misc"
+	netUtil "github.com/phpdragon/go-eurake-client/netutil"
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
 	"net"
 	"os"
 	"os/signal"
-	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -43,7 +43,7 @@ type Client struct {
 
 	mutex sync.RWMutex
 
-	config *Config
+	config *config.Config
 
 	// current client (instance) config
 	instance *core.Instance
@@ -70,12 +70,13 @@ type Client struct {
 	activeServiceIpPortMap map[string]map[int]map[int]string
 }
 
-func NewClient(config *Config) *Client {
-	return NewClientWithLog(config, nil)
+func NewClient(configPath string) *Client {
+	return NewClientWithLog(configPath, nil)
 }
 
-func NewClientWithLog(config *Config, zapLog *zap.Logger) *Client {
-	instanceConfig, _ := NewInstance(config)
+func NewClientWithLog(configPath string, zapLog *zap.Logger) *Client {
+	eurakeConfig, _ := config.LoadConfig("etc/app.yaml", false)
+	instanceConfig, _ := config.NewInstance(eurakeConfig)
 
 	client := &Client{
 		//自增器
@@ -83,7 +84,7 @@ func NewClientWithLog(config *Config, zapLog *zap.Logger) *Client {
 		logger:     log.NewLogAgent(zapLog),
 		signalChan: make(chan os.Signal),
 		//
-		config:   config,
+		config:   eurakeConfig,
 		instance: instanceConfig,
 	}
 
@@ -272,7 +273,7 @@ func (client *Client) refreshRegistry() {
 
 	for {
 		_ = client.fetchRegistry()
-		time.Sleep(time.Second * time.Duration(client.config.ClientConfig.getRegistryFetchIntervalSeconds()))
+		time.Sleep(time.Second * time.Duration(client.config.ClientConfig.GetRegistryFetchIntervalSeconds()))
 	}
 }
 
@@ -335,7 +336,7 @@ func (client *Client) registerWithEureka() {
 
 		err = api.RegisterInstance(client.instance.App, client.instance)
 		if err != nil {
-			client.logger.Error(fmt.Sprintf("ClientConfig register failed, err=%s", err.Error()))
+			client.logger.Error(fmt.Sprintf("clientConfig register failed, err=%s", err.Error()))
 			time.Sleep(time.Second * defaultSleepIntervals)
 			continue
 		}
@@ -411,7 +412,7 @@ func (client *Client) updateInstanceStatus() (bool, error) {
 	// then break loop
 	err = api.UpdateInstanceStatus(client.instance.App, client.instance.InstanceId, core.STATUS_UP)
 	if err != nil {
-		client.logger.Error(fmt.Sprintf("ClientConfig UP failed, err=%s", err.Error()))
+		client.logger.Error(fmt.Sprintf("clientConfig UP failed, err=%s", err.Error()))
 		return false, nil
 	}
 
