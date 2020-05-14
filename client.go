@@ -18,16 +18,16 @@ import (
 )
 
 const (
-	DEFAULT_SLEEP_INTERVALS = 3
+	defaultSleepIntervals = 3
 	//
-	HTTP_PREFIX  = "http://"
-	HTTPS_PREFIX = "https://"
+	httpPrefix  = "http://"
+	httpsPrefix = "https://"
 	//
-	http_key  = 0
-	https_key = 1
+	httpKey  = 0
+	httpsKey = 1
 )
 
-type EurekaClient struct {
+type Client struct {
 	Running bool
 
 	//自增器
@@ -68,14 +68,14 @@ type EurekaClient struct {
 	activeServiceIpPortMap map[string]map[int]map[int]string
 }
 
-func NewClient(config *Config) *EurekaClient {
+func NewClient(config *Config) *Client {
 	return NewClientWithLog(config, nil)
 }
 
-func NewClientWithLog(config *Config, zapLog *zap.Logger) *EurekaClient {
+func NewClientWithLog(config *Config, zapLog *zap.Logger) *Client {
 	instanceConfig, _ := NewInstance(config)
 
-	client := &EurekaClient{
+	client := &Client{
 		//自增器
 		autoInc:    atomic.NewInt64(0),
 		logger:     log.NewLogAgent(zapLog),
@@ -88,7 +88,7 @@ func NewClientWithLog(config *Config, zapLog *zap.Logger) *EurekaClient {
 	return client
 }
 
-func (client *EurekaClient) Run() {
+func (client *Client) Run() {
 	client.mutex.Lock()
 	client.Running = true
 	client.mutex.Unlock()
@@ -103,7 +103,7 @@ func (client *EurekaClient) Run() {
 	client.registerWithEureka()
 }
 
-func (client *EurekaClient) Shutdown() {
+func (client *Client) Shutdown() {
 	//client在shutdown情况下，是否显示从注册中心注销
 	if !client.Running || !client.config.ClientConfig.ShouldUnregisterOnShutdown {
 		return
@@ -129,16 +129,16 @@ func (client *EurekaClient) Shutdown() {
 	client.logger.Info(fmt.Sprintf("de-register %s success.", client.instance.InstanceId))
 }
 
-func (client *EurekaClient) GetApplications() map[string]*core.Application {
+func (client *Client) GetApplications() map[string]*core.Application {
 	return client.registryAppMap
 }
 
-func (client *EurekaClient) GetInstances() map[string]map[int]*core.Instance {
+func (client *Client) GetInstances() map[string]map[int]*core.Instance {
 	return client.activeInstanceMap
 }
 
 //获取下一个容器
-func (client *EurekaClient) GetNextServerFromEureka(appId string) (*core.Instance, error) {
+func (client *Client) GetNextServerFromEureka(appId string) (*core.Instance, error) {
 	instanceMap, err := client.getActiveInstancesByAppId(appId)
 	if nil != err {
 		return &core.Instance{}, err
@@ -153,21 +153,21 @@ func (client *EurekaClient) GetNextServerFromEureka(appId string) (*core.Instanc
 	return instanceMap[index], nil
 }
 
-func (client *EurekaClient) getRandIndex(total int) int {
+func (client *Client) getRandIndex(total int) int {
 	var index64 = client.autoInc.Inc() % int64(total)
 	return *(*int)(unsafe.Pointer(&index64))
 }
 
-func (client *EurekaClient) GetRealHttpUrl(httpUrl string) (string, error) {
-	httpUrlTmp := strings.Replace(httpUrl, HTTP_PREFIX, "", -1)
-	httpUrlTmp = strings.Replace(httpUrlTmp, HTTPS_PREFIX, "", -1)
+func (client *Client) GetRealHttpUrl(httpUrl string) (string, error) {
+	httpUrlTmp := strings.Replace(httpUrl, httpPrefix, "", -1)
+	httpUrlTmp = strings.Replace(httpUrlTmp, httpsPrefix, "", -1)
 	urls := strings.Split(httpUrlTmp, "/")
 	appName := urls[0]
 
 	//是否https
-	mapKey := http_key
-	if strings.HasPrefix(httpUrl, HTTPS_PREFIX) {
-		mapKey = https_key
+	mapKey := httpKey
+	if strings.HasPrefix(httpUrl, httpsPrefix) {
+		mapKey = httpsKey
 	}
 
 	ipPortMap, err := client.getActiveServiceIpPortByAppId(appName)
@@ -190,7 +190,7 @@ func (client *EurekaClient) GetRealHttpUrl(httpUrl string) (string, error) {
 	return strings.Replace(httpUrl, appName, realIpPort, -1), nil
 }
 
-func (client *EurekaClient) getActiveInstancesByAppId(appId string) (map[int]*core.Instance, error) {
+func (client *Client) getActiveInstancesByAppId(appId string) (map[int]*core.Instance, error) {
 	id := strings.ToUpper(appId)
 	cache := client.activeInstanceMap[id]
 	if nil != cache {
@@ -205,7 +205,7 @@ func (client *EurekaClient) getActiveInstancesByAppId(appId string) (map[int]*co
 	return client.activeInstanceMap[id], nil
 }
 
-func (client *EurekaClient) getActiveServiceIpPortByAppId(appId string) (map[int]map[int]string, error) {
+func (client *Client) getActiveServiceIpPortByAppId(appId string) (map[int]map[int]string, error) {
 	id := strings.ToUpper(appId)
 	cache := client.activeServiceIpPortMap[id]
 	if nil != cache {
@@ -220,7 +220,7 @@ func (client *EurekaClient) getActiveServiceIpPortByAppId(appId string) (map[int
 	return client.activeServiceIpPortMap[id], nil
 }
 
-func (client *EurekaClient) doRefreshByAppId(appId string) error {
+func (client *Client) doRefreshByAppId(appId string) error {
 	api, err := client.Api()
 	if err != nil {
 		return err
@@ -243,7 +243,7 @@ func (client *EurekaClient) doRefreshByAppId(appId string) error {
 	return nil
 }
 
-func (client *EurekaClient) refreshRegistry() {
+func (client *Client) refreshRegistry() {
 	if !client.config.ClientConfig.FetchRegistry {
 		return
 	}
@@ -255,7 +255,7 @@ func (client *EurekaClient) refreshRegistry() {
 }
 
 //刷新服务列表
-func (client *EurekaClient) fetchRegistry() error {
+func (client *Client) fetchRegistry() error {
 	client.logger.Info("Fetch registry info")
 
 	api, err := client.Api()
@@ -293,7 +293,7 @@ func (client *EurekaClient) fetchRegistry() error {
 
 // register instance (default current status is STARTING)
 // and update instance status to UP
-func (client *EurekaClient) registerWithEureka() {
+func (client *Client) registerWithEureka() {
 	if !client.config.ClientConfig.RegisterWithEureka {
 		client.logger.Warn("This instance don't register to eureka!")
 		return
@@ -307,14 +307,14 @@ func (client *EurekaClient) registerWithEureka() {
 
 		api, err := client.Api()
 		if err != nil {
-			time.Sleep(time.Second * DEFAULT_SLEEP_INTERVALS)
+			time.Sleep(time.Second * defaultSleepIntervals)
 			continue
 		}
 
 		err = api.RegisterInstance(client.instance.App, client.instance)
 		if err != nil {
 			client.logger.Error(fmt.Sprintf("ClientConfig register failed, err=%s", err.Error()))
-			time.Sleep(time.Second * DEFAULT_SLEEP_INTERVALS)
+			time.Sleep(time.Second * defaultSleepIntervals)
 			continue
 		}
 		client.logger.Info(fmt.Sprintf("Successfully register service to eureka with status[%s] !", client.instance.Status))
@@ -334,7 +334,7 @@ func (client *EurekaClient) registerWithEureka() {
 					break
 				}
 			}
-			time.Sleep(time.Second * DEFAULT_SLEEP_INTERVALS)
+			time.Sleep(time.Second * defaultSleepIntervals)
 		}
 	}()
 
@@ -343,7 +343,7 @@ func (client *EurekaClient) registerWithEureka() {
 }
 
 //判断http服务是否已经启动
-func (client *EurekaClient) serverIsStarted() bool {
+func (client *Client) serverIsStarted() bool {
 	port := client.instance.Port.Port
 	if "true" == client.instance.SecurePort.Enabled {
 		port = client.instance.SecurePort.Port
@@ -355,7 +355,7 @@ func (client *EurekaClient) serverIsStarted() bool {
 	return used
 }
 
-func (client *EurekaClient) PortInUse(host string, ports []string) bool {
+func (client *Client) PortInUse(host string, ports []string) bool {
 	for _, port := range ports {
 		timeout := time.Second
 		conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
@@ -371,7 +371,7 @@ func (client *EurekaClient) PortInUse(host string, ports []string) bool {
 	return false
 }
 
-func (client *EurekaClient) updateInstanceStatus() (bool, error) {
+func (client *Client) updateInstanceStatus() (bool, error) {
 	client.logger.Info("Update the instance status to UP ...")
 
 	if client.instance == nil {
@@ -399,7 +399,7 @@ func (client *EurekaClient) updateInstanceStatus() (bool, error) {
 }
 
 // Api for sending rest httpClient to eureka server
-func (client *EurekaClient) Api() (*core.EurekaServerApi, error) {
+func (client *Client) Api() (*core.EurekaServerApi, error) {
 	api, err := client.pickEurekaServerApi()
 	if err != nil {
 		return nil, err
@@ -409,24 +409,24 @@ func (client *EurekaClient) Api() (*core.EurekaServerApi, error) {
 
 //TODO:
 // rand to pick service url and new EurekaServerApi instance
-func (client *EurekaClient) pickEurekaServerApi() (*core.EurekaServerApi, error) {
+func (client *Client) pickEurekaServerApi() (*core.EurekaServerApi, error) {
 	return core.NewEurekaServerApi(client.config.ServiceURL.DefaultZone), nil
 }
 
 // 发送心跳
 // eureka client heartbeat
-func (client *EurekaClient) heartbeat() {
+func (client *Client) heartbeat() {
 	for {
 		api, err := client.Api()
 		if err != nil {
-			time.Sleep(time.Second * DEFAULT_SLEEP_INTERVALS)
+			time.Sleep(time.Second * defaultSleepIntervals)
 			continue
 		}
 
 		err = api.SendHeartbeat(client.instance.App, client.instance.InstanceId)
 		if err != nil {
 			client.logger.Error(fmt.Sprintf("Failed to send heartbeat, err=%s", err.Error()))
-			time.Sleep(time.Second * DEFAULT_SLEEP_INTERVALS)
+			time.Sleep(time.Second * defaultSleepIntervals)
 			continue
 		}
 
@@ -460,15 +460,15 @@ func getActiveInstancesAndIpPorts(filterOnlyUpInstances bool, instances []core.I
 		}
 	}
 
-	urls[http_key] = httpUrls
-	urls[https_key] = httpsUrls
+	urls[httpKey] = httpUrls
+	urls[httpsKey] = httpsUrls
 	return instancesX, urls
 }
 
 // for graceful kill. Here handle SIGTERM signal to do sth
 // e.g: kill -TERM $pid
 //      or "ctrl + c" to exit
-func (client *EurekaClient) handleSignal() {
+func (client *Client) handleSignal() {
 	if client.signalChan == nil {
 		client.signalChan = make(chan os.Signal)
 	}
