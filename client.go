@@ -231,7 +231,7 @@ func (client *EurekaClient) doRefreshByAppId(appId string) error {
 		return errr
 	}
 
-	instances, urls := getActiveInstancesAndUrls(client.config.ClientConfig.FilterOnlyUpInstances, application.Instances)
+	instances, urls := getActiveInstancesAndIpPorts(client.config.ClientConfig.FilterOnlyUpInstances, application.Instances)
 
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
@@ -275,7 +275,7 @@ func (client *EurekaClient) fetchRegistry() error {
 	activeServiceUrls := make(map[string]map[int]map[int]string)
 
 	for _, app := range apps.Applications {
-		instances, urls := getActiveInstancesAndUrls(client.config.ClientConfig.FilterOnlyUpInstances, app.Instances)
+		instances, urls := getActiveInstancesAndIpPorts(client.config.ClientConfig.FilterOnlyUpInstances, app.Instances)
 		registryApps[app.Name] = &app
 		activeInstances[app.Name] = instances
 		activeServiceUrls[app.Name] = urls
@@ -436,7 +436,7 @@ func (client *EurekaClient) heartbeat() {
 }
 
 //获取有效的实例和链接
-func getActiveInstancesAndUrls(filterOnlyUpInstances bool, instances []core.Instance) (map[int]*core.Instance, map[int]map[int]string) {
+func getActiveInstancesAndIpPorts(filterOnlyUpInstances bool, instances []core.Instance) (map[int]*core.Instance, map[int]map[int]string) {
 	instancesX := make(map[int]*core.Instance)
 	//
 	urls := make(map[int]map[int]string)
@@ -453,10 +453,10 @@ func getActiveInstancesAndUrls(filterOnlyUpInstances bool, instances []core.Inst
 		instancesX[i] = &instance
 
 		if "true" == instance.Port.Enabled {
-			httpUrls[i] = fmt.Sprintf("http://%s:%d", instance.IpAddr, instance.Port.Port)
+			httpUrls[i] = fmt.Sprintf("%s:%d", instance.IpAddr, instance.Port.Port)
 		}
 		if "false" == instance.SecurePort.Enabled {
-			httpsUrls[i] = fmt.Sprintf("https://%s:%d", instance.IpAddr, instance.Port.Port)
+			httpsUrls[i] = fmt.Sprintf("%s:%d", instance.IpAddr, instance.SecurePort.Port)
 		}
 	}
 
