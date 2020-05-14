@@ -3,9 +3,7 @@ package eureka
 import (
 	"fmt"
 	"github.com/phpdragon/go-eurake-client/core"
-	"net"
 	"strings"
-	"time"
 )
 
 //获取下一个容器
@@ -74,20 +72,4 @@ func (client *Client) GetPort() int {
 		port = client.instance.SecurePort.Port
 	}
 	return port
-}
-
-func (client *Client) PortInUse(host string, ports []string) bool {
-	for _, port := range ports {
-		timeout := time.Second
-		conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
-		if err != nil {
-			return false
-		}
-		if conn != nil {
-			defer conn.Close()
-			return true
-		}
-	}
-
-	return false
 }
