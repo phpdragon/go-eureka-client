@@ -5,11 +5,13 @@ import (
 	core "github.com/phpdragon/go-eurake-client/core"
 	log "github.com/phpdragon/go-eurake-client/log"
 	netUtil "github.com/phpdragon/go-eurake-client/netutil"
+	misc "github.com/phpdragon/go-eurake-client/misc"
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -127,6 +129,26 @@ func (client *Client) Shutdown() {
 	client.mutex.Unlock()
 
 	client.logger.Info(fmt.Sprintf("de-register %s success.", client.instance.InstanceId))
+}
+
+func (client *Client) ActuatorStatus() interface{} {
+	return misc.ActuatorStatus(client.GetPort(), client.GetAppName())
+}
+
+func (client *Client) ActuatorHealth() interface{} {
+	return misc.ActuatorHealth()
+}
+
+func (client *Client) GetAppName() string {
+	return client.config.InstanceConfig.AppName
+}
+
+func (client *Client) GetPort() int {
+	port := client.instance.Port.Port
+	if "true" == client.instance.SecurePort.Enabled {
+		port = client.instance.SecurePort.Port
+	}
+	return port
 }
 
 func (client *Client) GetApplications() map[string]*core.Application {

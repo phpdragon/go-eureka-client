@@ -1,4 +1,4 @@
-package eureka
+package misc
 
 import (
 	"strconv"
