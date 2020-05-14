@@ -49,14 +49,14 @@ type EurekaClient struct {
 	// applications registry
 	// key: appId
 	// value: Application
-	registryApps map[string]*core.Application
+	registryAppMap map[string]*core.Application
 
 	// instances registry
 	// key: appId
 	// value:
 	//		key:  int(0...n)
 	//		value: InstanceConfig
-	activeInstances map[string]map[int]*core.Instance
+	activeInstanceMap map[string]map[int]*core.Instance
 
 	// instance real url map
 	// key: appId
@@ -65,7 +65,7 @@ type EurekaClient struct {
 	//		value:
 	//			key:  int(0...n)
 	//			value: real url
-	activeServiceUrls map[string]map[int]map[int]string
+	activeServiceIpPortMap map[string]map[int]map[int]string
 }
 
 func NewClient(config *Config) *EurekaClient {
@@ -97,7 +97,7 @@ func (client *EurekaClient) Run() {
 	go client.handleSignal()
 
 	// (if FetchRegistry is true), fetch registry apps periodically
-	// and update to t.registryApps
+	// and update to t.registryAppMap
 	go client.refreshRegistry()
 
 	client.registerWithEureka()
@@ -130,11 +130,11 @@ func (client *EurekaClient) Shutdown() {
 }
 
 func (client *EurekaClient) GetApplications() map[string]*core.Application {
-	return client.registryApps
+	return client.registryAppMap
 }
 
 func (client *EurekaClient) GetInstances() map[string]map[int]*core.Instance {
-	return client.activeInstances
+	return client.activeInstanceMap
 }
 
 //获取下一个容器
@@ -170,29 +170,31 @@ func (client *EurekaClient) GetRealHttpUrl(httpUrl string) (string, error) {
 		mapKey = https_key
 	}
 
-	urlMap, err := client.getActiveServiceUrlsByAppId(appName)
-	if nil != err || 0 == len(urlMap) {
+	ipPortMap, err := client.getActiveServiceIpPortByAppId(appName)
+	if nil != err || 0 == len(ipPortMap) {
 		//TODO：文案
 		return "", fmt.Errorf("This %s instances not exist!", appName)
 	}
 
-	eurekaUrls := urlMap[mapKey]
-	if nil == eurekaUrls || 0 == len(eurekaUrls) {
+	//取http还是https的ip:port
+	realIpPorts := ipPortMap[mapKey]
+	if nil == realIpPorts || 0 == len(realIpPorts) {
 		//TODO：文案
 		return "", fmt.Errorf("This %s instances not exist!", appName)
 	}
 
-	index := client.getRandIndex(len(eurekaUrls))
-	realIpPort := eurekaUrls[index]
+	//随机取一个目标ip:port
+	index := client.getRandIndex(len(realIpPorts))
+	realIpPort := realIpPorts[index]
 
 	return strings.Replace(httpUrl, appName, realIpPort, -1), nil
 }
 
 func (client *EurekaClient) getActiveInstancesByAppId(appId string) (map[int]*core.Instance, error) {
 	id := strings.ToUpper(appId)
-	cache := client.activeInstances[id]
+	cache := client.activeInstanceMap[id]
 	if nil != cache {
-		return client.activeInstances[id], nil
+		return client.activeInstanceMap[id], nil
 	}
 
 	err := client.doRefreshByAppId(appId)
@@ -200,14 +202,14 @@ func (client *EurekaClient) getActiveInstancesByAppId(appId string) (map[int]*co
 		return nil, err
 	}
 
-	return client.activeInstances[id], nil
+	return client.activeInstanceMap[id], nil
 }
 
-func (client *EurekaClient) getActiveServiceUrlsByAppId(appId string) (map[int]map[int]string, error) {
+func (client *EurekaClient) getActiveServiceIpPortByAppId(appId string) (map[int]map[int]string, error) {
 	id := strings.ToUpper(appId)
-	cache := client.activeServiceUrls[id]
+	cache := client.activeServiceIpPortMap[id]
 	if nil != cache {
-		return client.activeServiceUrls[id], nil
+		return client.activeServiceIpPortMap[id], nil
 	}
 
 	err := client.doRefreshByAppId(appId)
@@ -215,7 +217,7 @@ func (client *EurekaClient) getActiveServiceUrlsByAppId(appId string) (map[int]m
 		return nil, err
 	}
 
-	return client.activeServiceUrls[id], nil
+	return client.activeServiceIpPortMap[id], nil
 }
 
 func (client *EurekaClient) doRefreshByAppId(appId string) error {
@@ -234,9 +236,9 @@ func (client *EurekaClient) doRefreshByAppId(appId string) error {
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
 
-	client.registryApps[appId] = application
-	client.activeInstances[appId] = instances
-	client.activeServiceUrls[appId] = urls
+	client.registryAppMap[appId] = application
+	client.activeInstanceMap[appId] = instances
+	client.activeServiceIpPortMap[appId] = urls
 
 	return nil
 }
@@ -282,9 +284,9 @@ func (client *EurekaClient) fetchRegistry() error {
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
 
-	client.registryApps = registryApps
-	client.activeInstances = activeInstances
-	client.activeServiceUrls = activeServiceUrls
+	client.registryAppMap = registryApps
+	client.activeInstanceMap = activeInstances
+	client.activeServiceIpPortMap = activeServiceUrls
 
 	return nil
 }
