@@ -1,6 +1,8 @@
 # go-eureka-client
 
 #### 介绍
+简体中文 | [English](./README.en.md)
+
 Golang 实现的非官方 Spring Cloud Eureka client.
 
 #### 软件架构

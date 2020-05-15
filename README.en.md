@@ -1,6 +1,8 @@
 # go-eureka-client
 
 #### Description
+English | [简体中文](./README.md)
+
 Golang implementation of the unofficial Spring Cloud Eureka client. 
 
 #### Software Architecture
