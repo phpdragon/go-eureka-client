@@ -129,13 +129,9 @@ func (client *Client) Shutdown() {
 	}
 
 	client.logger.Info(fmt.Sprintf("Receive exit signal, client instance going to de-register, instanceId=%s.", client.instance.InstanceId))
+
 	// de-register instance
-	api, err := client.Api()
-	if err != nil {
-		client.logger.Error(fmt.Sprintf("Failed to get EurekaServerApi instance, de-register %s failed, err=%s", client.instance.InstanceId, err.Error()))
-		return
-	}
-	err = api.DeRegisterInstance(client.instance.App, client.instance.InstanceId)
+	err := client.apiClient.DeRegisterInstance(client.instance.App, client.instance.InstanceId)
 	if err != nil {
 		client.logger.Error(fmt.Sprintf("Failed to de-register %s, err=%s", client.instance.InstanceId, err.Error()))
 		return

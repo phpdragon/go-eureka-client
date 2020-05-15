@@ -38,12 +38,7 @@ func (client *Client) getActiveInstancesByAppId(appId string) (map[int]*core.Ins
 }
 
 func (client *Client) doRefreshByAppId(appId string) error {
-	api, err := client.Api()
-	if err != nil {
-		return err
-	}
-
-	application, errr := api.QueryAllInstanceByAppId(appId)
+	application, errr := client.apiClient.QueryAllInstanceByAppId(appId)
 	if errr != nil {
 		return errr
 	}
