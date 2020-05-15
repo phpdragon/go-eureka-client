@@ -27,7 +27,7 @@ type Client struct {
 	Running bool
 
 	//自增器
-	autoInc *atomic.Int64
+	autoIncr *atomic.Int64
 
 	// for monitor system signal
 	signalChan chan os.Signal
@@ -69,12 +69,12 @@ func NewClient(configPath string) *Client {
 }
 
 func NewClientWithLog(configPath string, zapLog *zap.Logger) *Client {
-	eurekaConfig, _ := config.LoadConfig("etc/app.yaml", false)
+	eurekaConfig, _ := config.LoadConfig(configPath, false)
 	instanceConfig, _ := config.NewInstance(eurekaConfig)
 
 	client := &Client{
 		//自增器
-		autoInc:    atomic.NewInt64(0),
+		autoIncr:   atomic.NewInt64(0),
 		logger:     logger.NewLogAgent(zapLog),
 		signalChan: make(chan os.Signal),
 		//

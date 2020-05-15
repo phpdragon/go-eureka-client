@@ -37,3 +37,8 @@ func PortInUse(host string, port int) bool {
 	}
 	return false
 }
+
+//判断网络是否可用
+func NetWorkStatus(host string, port int) bool {
+	return PortInUse(host, port)
+}

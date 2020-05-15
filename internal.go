@@ -91,6 +91,6 @@ func getActiveInstancesAndIpPorts(filterOnlyUpInstances bool, instances []core.I
 }
 
 func (client *Client) getRandIndex(total int) int {
-	var index64 = client.autoInc.Inc() % int64(total)
+	var index64 = client.autoIncr.Inc() % int64(total)
 	return *(*int)(unsafe.Pointer(&index64))
 }

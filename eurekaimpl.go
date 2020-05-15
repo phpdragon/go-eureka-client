@@ -183,3 +183,7 @@ func (client *Client) heartbeat() {
 		time.Sleep(time.Duration(client.config.InstanceConfig.LeaseInfo.RenewalIntervalInSecs) * time.Second)
 	}
 }
+
+func  (client *Client) monitor() {
+
+}
