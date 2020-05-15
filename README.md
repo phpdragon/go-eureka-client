@@ -7,7 +7,7 @@ Golang 实现的非官方 Spring Cloud Eureka client.
 
 >提示:非全功能，只实现了一些基本和有用的功能。
 
-#### 软件架构
+#### 配置和特性
 
 Spring Cloud Eureka Configurations:
 

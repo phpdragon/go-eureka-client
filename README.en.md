@@ -6,7 +6,7 @@ English | [简体中文](./README.md)
 Golang implementation of the unofficial Spring Cloud Eureka client. 
 > Tips: Non-full-features, only some basic and useful features implemented.
 
-#### Software Architecture
+#### Configuration and features
 
 Spring Cloud Eureka Configurations:
 
