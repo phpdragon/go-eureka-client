@@ -1,27 +1,33 @@
 # go-eureka-client
 
 #### 介绍
-Golang 实现的 Eureka Client
+Golang 实现的非官方 Spring Cloud Eureka client.
 
 #### 软件架构
 
-支持的Eureka server Rest api，参见下面的列表:
+支持的[Eureka server Rest api](https://github.com/Netflix/eureka/wiki/Eureka-REST-operations) ，参见下面的列表:
 
-| Operation | HTTP action | Support |
+| 操作 | HTTP动作 | 支持 |
 |-----------|-------------|-------------|
-| Register new application instance | POST /eureka/v2/apps/**appID** | √ |
-| De-register application instance | DELETE /eureka/v2/apps/**appID**/**instanceID** | √ |
-| Send application instance heartbeat | PUT /eureka/v2/apps/**appID**/**instanceID** | √ |
-| Query for all instances | GET /eureka/v2/apps | √ |
-| Query for all **appID** instances | GET /eureka/v2/apps/**appID** | √ |
-| Query for a specific **appID**/**instanceID** | GET /eureka/v2/apps/**appID**/**instanceID** | √ |
-| Query for a specific **instanceID** | GET /eureka/v2/instances/**instanceID** | √ |
-| Take instance out of service | PUT /eureka/v2/apps/**appID**/**instanceID**/status?value=OUT_OF_SERVICE| √ |
-| Move instance back into service (remove override) | DELETE /eureka/v2/apps/**appID**/**instanceID**/status?value=UP  (The value=UP is optional, it is used as a suggestion for the fallback status due to removal of the override)| √ |
-| Update metadata | PUT /eureka/v2/apps/**appID**/**instanceID**/metadata?key=value| √ |
-| Query for all instances under a particular **vip address** | GET /eureka/v2/vips/**vipAddress** | √  |
-| Query for all instances under a particular **secure vip address** | GET /eureka/v2/svips/**svipAddress** | √  |
+| 注册应用实例 | POST /eureka/v2/apps/**appID** | √ |
+| 注销应用实例 | DELETE /eureka/v2/apps/**appID**/**instanceID** | √ |
+| 发送心跳 | PUT /eureka/v2/apps/**appID**/**instanceID** | √ |
+| 查询所有应用实例 | GET /eureka/v2/apps | √ |
+| 通过 **appID** 查询所有实例 | GET /eureka/v2/apps/**appID** | √ |
+| 通过 **appID**/**instanceID**  查询实例 | GET /eureka/v2/apps/**appID**/**instanceID** | √ |
+| 通过 **instanceID** 查询实例 | GET /eureka/v2/instances/**instanceID** | √ |
+| 从服务中取出实例 | PUT /eureka/v2/apps/**appID**/**instanceID**/status?value=OUT_OF_SERVICE| √ |
+| 将实例移除(移除覆盖) | DELETE /eureka/v2/apps/**appID**/**instanceID**/status?value=UP  (The value=UP is optional, it is used as a suggestion for the fallback status due to removal of the override)| √ |
+| 更新元数据 | PUT /eureka/v2/apps/**appID**/**instanceID**/metadata?key=value| √ |
+| 通过 **vip address** 查询所有实例 | GET /eureka/v2/vips/**vipAddress** | √  |
+| 通过 **secure vip address** 查询所有实例 | GET /eureka/v2/svips/**svipAddress** | √  |
 
+支持的特性，见以下列表:
+| 特性 | 支持 |
+|-----------|-------------|
+| 定期重连 | √  |
+| 失败重试 | √  |
+| 注册重定向 | × |
 
 #### 安装教程
 
