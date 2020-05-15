@@ -39,6 +39,16 @@ func PortInUse(host string, port int) bool {
 }
 
 //判断网络是否可用
-func NetWorkStatus(host string, port int) bool {
-	return PortInUse(host, port)
+func NetWorkStatus(ipWithPort string) bool {
+	timeout := time.Second
+
+	conn, err := net.DialTimeout("tcp", ipWithPort, timeout)
+	if err != nil {
+		return false
+	}
+	if conn != nil {
+		defer conn.Close()
+		return true
+	}
+	return false
 }

@@ -151,6 +151,9 @@ func (client *Client) updateInstanceStatus() (bool, error) {
 		return false, nil
 	}
 
+	//本地状态更新为up
+	client.instance.Status = core.STATUS_UP
+
 	client.logger.Info("The server status[UP] was updated successfully !")
 
 	return true, nil
