@@ -1,7 +1,7 @@
-# go-eurake-client
+# go-eureka-client
 
 #### 介绍
-Golang 实现的 Eurake Client
+Golang 实现的 Eureka Client
 
 #### 软件架构
 

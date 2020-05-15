@@ -2,7 +2,7 @@ package eureka
 
 import (
 	"fmt"
-	"github.com/phpdragon/go-eurake-client/core"
+	"github.com/phpdragon/go-eureka-client/core"
 	"strings"
 	"unsafe"
 )

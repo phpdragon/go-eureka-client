@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	httpClient "github.com/phpdragon/go-eurake-client/httpclent"
+	httpClient "github.com/phpdragon/go-eureka-client/httpclent"
 	"net/url"
 	"strings"
 )

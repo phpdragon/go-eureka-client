@@ -2,9 +2,9 @@ package eureka
 
 import (
 	"fmt"
-	"github.com/phpdragon/go-eurake-client/config"
-	"github.com/phpdragon/go-eurake-client/core"
-	"github.com/phpdragon/go-eurake-client/logger"
+	"github.com/phpdragon/go-eureka-client/config"
+	"github.com/phpdragon/go-eureka-client/core"
+	"github.com/phpdragon/go-eureka-client/logger"
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
 	"os"
@@ -69,8 +69,8 @@ func NewClient(configPath string) *Client {
 }
 
 func NewClientWithLog(configPath string, zapLog *zap.Logger) *Client {
-	eurakeConfig, _ := config.LoadConfig("etc/app.yaml", false)
-	instanceConfig, _ := config.NewInstance(eurakeConfig)
+	eurekaConfig, _ := config.LoadConfig("etc/app.yaml", false)
+	instanceConfig, _ := config.NewInstance(eurekaConfig)
 
 	client := &Client{
 		//自增器
@@ -78,7 +78,7 @@ func NewClientWithLog(configPath string, zapLog *zap.Logger) *Client {
 		logger:     logger.NewLogAgent(zapLog),
 		signalChan: make(chan os.Signal),
 		//
-		config:   eurakeConfig,
+		config:   eurekaConfig,
 		instance: instanceConfig,
 	}
 

@@ -2,8 +2,8 @@ package eureka
 
 import (
 	"fmt"
-	"github.com/phpdragon/go-eurake-client/core"
-	netUtil "github.com/phpdragon/go-eurake-client/netutil"
+	"github.com/phpdragon/go-eureka-client/core"
+	netUtil "github.com/phpdragon/go-eureka-client/netutil"
 	"time"
 )
 
@@ -98,6 +98,7 @@ func (client *Client) registerWithEureka() {
 	go func() {
 		for {
 			enabledOnInit := client.config.InstanceConfig.InstanceEnabledOnInit
+			//如果向eureka注册后立即启用实例以获取流量，或者服务已经启动，则向eureka更新为在线状态
 			if enabledOnInit || (!enabledOnInit && client.serverIsStarted()) {
 				updated, err := client.updateInstanceStatus()
 				if nil != err {
