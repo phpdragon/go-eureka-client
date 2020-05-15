@@ -4,10 +4,39 @@
 English | [简体中文](./README.md)
 
 Golang implementation of the unofficial Spring Cloud Eureka client. 
+> Tips: Non-full-features, only some basic and useful features implemented.
 
 #### Software Architecture
 
-Supported Eureka server Rest API, see the following list:
+Spring Cloud Eureka Configurations:
+
+| Configuration | Support |
+|-----------|-------------|
+|availabilityZones| × |
+|serviceUrl| √ |
+|useDnsForFetchingServiceUrls| × |
+|preferSameZoneEureka| × |
+|filterOnlyUpInstances| √ |
+|registryFetchIntervalSeconds| √ |
+|fetchRegistry| √ |
+|registerWithEureka| √ |
+|shouldUnregisterOnShutdown| √ |
+|instanceEnabledOnInit| √ |
+|renewalIntervalInSecs| √ |
+
+**go-eureka-client** extended features, refer to list below:
+
+| Feature | Support |
+|-----------|-------------|
+| RegisterWithEureka | √ | 
+| RegistryFetchIntervalSeconds | √ |
+| FetchRegistry | √ |
+| Regular reconnection | √ |
+| Failure to retry | √ |
+| Registration redirection | × |
+| HeartbeatIntervals | √ |
+
+Eureka server Rest api supported, refer to list below:
 
 | Operation | HTTP action | Support |
 |-----------|-------------|-------------|
@@ -23,14 +52,6 @@ Supported Eureka server Rest API, see the following list:
 | Update metadata | PUT /eureka/v2/apps/**appID**/**instanceID**/metadata?key=value| √ |
 | Query for all instances under a particular **vip address** | GET /eureka/v2/vips/**vipAddress** | √  |
 | Query for all instances under a particular **secure vip address** | GET /eureka/v2/svips/**svipAddress** | √  |
-
-Supported features, see the following list:
-
-| Feature | Support |
-|-----------|-------------|
-| Regular reconnection | √  |
-| Failure to retry | √  |
-| Registration redirection | × |
 
 #### Installation
 

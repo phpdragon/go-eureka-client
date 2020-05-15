@@ -5,7 +5,37 @@
 
 Golang 实现的非官方 Spring Cloud Eureka client.
 
+>提示:非全功能，只实现了一些基本和有用的功能。
+
 #### 软件架构
+
+Spring Cloud Eureka Configurations:
+
+| 配置 | 支持 |
+|-----------|-------------|
+|availabilityZones| × |
+|serviceUrl| √ |
+|useDnsForFetchingServiceUrls| × |
+|preferSameZoneEureka| × |
+|filterOnlyUpInstances| √ |
+|registryFetchIntervalSeconds| √ |
+|fetchRegistry| √ |
+|registerWithEureka| √ |
+|shouldUnregisterOnShutdown| √ |
+|instanceEnabledOnInit| √ |
+|renewalIntervalInSecs| √ |
+
+**go-eureka-client** 扩展的特性，见以下列表:
+
+| 特性 | 支持 |
+|-----------|-------------|
+| 注册至Eureka | √  |
+| 定期获取注册服务列表 | √ |
+| 获取注册服务列表 | √ |
+| 定期重连 | √ |
+| 失败重试 | √ |
+| 注册重定向 | × |
+| 定期发送心跳 | √ |
 
 支持的[Eureka server Rest api](https://github.com/Netflix/eureka/wiki/Eureka-REST-operations) ，参见下面的列表:
 
@@ -23,13 +53,6 @@ Golang 实现的非官方 Spring Cloud Eureka client.
 | 更新元数据 | PUT /eureka/v2/apps/**appID**/**instanceID**/metadata?key=value| √ |
 | 通过 **vip address** 查询所有实例 | GET /eureka/v2/vips/**vipAddress** | √  |
 | 通过 **secure vip address** 查询所有实例 | GET /eureka/v2/svips/**svipAddress** | √  |
-
-支持的特性，见以下列表:
-| 特性 | 支持 |
-|-----------|-------------|
-| 定期重连 | √  |
-| 失败重试 | √  |
-| 注册重定向 | × |
 
 #### 安装教程
 
