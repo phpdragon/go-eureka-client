@@ -26,6 +26,9 @@ const (
 type Client struct {
 	Running bool
 
+	//
+	apiClient *core.EurekaServerApi
+
 	//自增器
 	autoIncr *atomic.Int64
 
@@ -69,18 +72,37 @@ func NewClient(configPath string) *Client {
 }
 
 func NewClientWithLog(configPath string, zapLog *zap.Logger) *Client {
-	eurekaConfig, _ := config.LoadConfig(configPath, false)
-	instanceConfig, _ := config.NewInstance(eurekaConfig)
+	logger := logger.NewLogAgent(zapLog)
+
+	eurekaConfig, err := config.LoadConfig(configPath, false)
+	if err != nil {
+		logger.Error(fmt.Sprintf("LoadConfig %s failed, err=%s", configPath, err.Error()))
+		os.Exit(1)
+	}
+
+	//实例化
+	instanceInfo, err := config.NewInstance(eurekaConfig)
+	if err != nil {
+		logger.Error(fmt.Sprintf("NewInstance %s failed, err=%s", eurekaConfig.InstanceConfig.AppName, err.Error()))
+		os.Exit(1)
+	}
 
 	client := &Client{
 		//自增器
 		autoIncr:   atomic.NewInt64(0),
-		logger:     logger.NewLogAgent(zapLog),
+		logger:     logger,
 		signalChan: make(chan os.Signal),
 		//
 		config:   eurekaConfig,
-		instance: instanceConfig,
+		instance: instanceInfo,
 	}
+
+	api, err := client.Api()
+	if err != nil {
+		client.logger.Error(fmt.Sprintf("Failed to get EurekaServerApi instance, err=%s", err.Error()))
+		os.Exit(1)
+	}
+	client.apiClient = api
 
 	return client
 }
