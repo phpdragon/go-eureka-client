@@ -56,9 +56,8 @@ Spring Cloud Eureka Configurations:
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  go get github.com/phpdragon/go-eurake-client
+2.  import eureka "github.com/phpdragon/go-eureka-client"
 
 #### 使用说明
 

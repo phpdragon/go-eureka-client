@@ -36,7 +36,7 @@ Spring Cloud Eureka Configurations:
 | Registration redirection | × |
 | HeartbeatIntervals | √ |
 
-Eureka server Rest api supported, refer to list below:
+[Eureka server Rest api](https://github.com/Netflix/eureka/wiki/Eureka-REST-operations) supported, refer to list below:
 
 | Operation | HTTP action | Support |
 |-----------|-------------|-------------|
@@ -55,9 +55,8 @@ Eureka server Rest api supported, refer to list below:
 
 #### Installation
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  go get github.com/phpdragon/go-eurake-client
+2.  import eureka "github.com/phpdragon/go-eureka-client"
 
 #### Samples
 
@@ -94,11 +93,10 @@ if err := http.ListenAndServe("127.0.0.1:8080", nil); err != nil {
 
 #### Contribution
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
+1.  Fork the repository
+2.  Create Feat_xxx branch
+3.  Commit your code
+4.  Create Pull Request
 
 #### Thanks
 
