@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/phpdragon/go-eureka-client/core"
 	netUtil "github.com/phpdragon/go-eureka-client/netutil"
+	"strings"
 	"time"
 )
 
@@ -86,7 +87,7 @@ func (client *Client) registerWithEureka() {
 
 		err = api.RegisterInstance(client.instance.App, client.instance)
 		if err != nil {
-			client.logger.Error(fmt.Sprintf("clientConfig register failed, err=%s", err.Error()))
+			client.logger.Error(fmt.Sprintf("client register failed, err=%s", err.Error()))
 			time.Sleep(time.Second * defaultSleepIntervals)
 			continue
 		}
@@ -114,6 +115,9 @@ func (client *Client) registerWithEureka() {
 
 	//发送心跳
 	go client.heartbeat()
+
+	//监控客户端
+	go client.monitorClient()
 }
 
 //判断http服务是否已经启动
@@ -147,7 +151,7 @@ func (client *Client) updateInstanceStatus() (bool, error) {
 	// then break loop
 	err = api.UpdateInstanceStatus(client.instance.App, client.instance.InstanceId, core.STATUS_UP)
 	if err != nil {
-		client.logger.Error(fmt.Sprintf("clientConfig UP failed, err=%s", err.Error()))
+		client.logger.Error(fmt.Sprintf("client UP failed, err=%s", err.Error()))
 		return false, nil
 	}
 
@@ -187,6 +191,53 @@ func (client *Client) heartbeat() {
 	}
 }
 
-func  (client *Client) monitor() {
+//监控客户端
+func (client *Client) monitorClient() {
+	eurekaUrl := client.config.ServiceURL.DefaultZone
+	eurekaUrl = strings.Replace(eurekaUrl, httpPrefix, "", -1)
+	eurekaUrl = strings.Replace(eurekaUrl, httpsPrefix, "", -1)
+	urls := strings.Split(eurekaUrl, "/")
+	eurekaIpPort := urls[0]
 
+	go func() {
+		for{
+			time.Sleep(time.Duration(60) * time.Second)
+
+			client.reRegistration(eurekaIpPort)
+
+			client.logger.Debug(fmt.Sprintf("monitor app=%s, instanceId=%s", client.instance.App, client.instance.InstanceId))
+		}
+	}()
+}
+
+//重新注册
+func (client *Client) reRegistration(eurekaIpPort string){
+	if core.STATUS_UP != client.instance.Status {
+		return
+	}
+
+	netStatus := netUtil.NetWorkStatus(eurekaIpPort)
+	if !netStatus {
+		return
+	}
+
+	api, err := client.Api()
+	if err != nil {
+		return
+	}
+
+	//存在记录注册记录
+	instance,err := api.QuerySpecificAppInstance(client.instance.InstanceId)
+	if nil == err && nil != instance && 0 < len(instance.IpAddr) {
+		return
+	}
+
+	//不存在则重新注册
+	client.instance.Status = core.STATUS_UP
+	err = api.RegisterInstance(client.instance.App, client.instance)
+	if err != nil {
+		client.logger.Error(fmt.Sprintf("client re-register failed, err=%s", err.Error()))
+	}else{
+		client.logger.Info("client re-register successfully !")
+	}
 }
