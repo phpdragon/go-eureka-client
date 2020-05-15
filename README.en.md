@@ -88,7 +88,7 @@ if err := http.ListenAndServe("127.0.0.1:8080", nil); err != nil {
 
 #### Use cases
 
-1. [gateway_proxy(转发代理)](https://gitee.com/phpdragon/gateway_proxy)
+1. [gateway_proxy(转发代理)](https://github.com/phpdragon/gateway_proxy)
 
 #### Gitee Feature
 
