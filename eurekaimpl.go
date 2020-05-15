@@ -17,6 +17,13 @@ func (client *Client) Api() (*core.EurekaServerApi, error) {
 	return api, nil
 }
 
+//TODO:
+// rand to pick service url and new EurekaServerApi instance
+func (client *Client) pickEurekaServerApi() (*core.EurekaServerApi, error) {
+	return core.NewEurekaServerApi(client.config.ServiceURL.DefaultZone), nil
+}
+
+//刷新服务列表
 func (client *Client) refreshRegistry() {
 	if !client.config.ClientConfig.FetchRegistry {
 		return
@@ -28,7 +35,7 @@ func (client *Client) refreshRegistry() {
 	}
 }
 
-//刷新服务列表
+//抓取已注册服务列表
 func (client *Client) fetchRegistry() error {
 	client.logger.Info("Fetch registry info")
 
@@ -121,6 +128,7 @@ func (client *Client) serverIsStarted() bool {
 	return used
 }
 
+//更新实例的注册状态
 func (client *Client) updateInstanceStatus() (bool, error) {
 	client.logger.Info("Update the instance status to UP ...")
 
@@ -144,12 +152,6 @@ func (client *Client) updateInstanceStatus() (bool, error) {
 	client.logger.Info("The server status[UP] was updated successfully !")
 
 	return true, nil
-}
-
-//TODO:
-// rand to pick service url and new EurekaServerApi instance
-func (client *Client) pickEurekaServerApi() (*core.EurekaServerApi, error) {
-	return core.NewEurekaServerApi(client.config.ServiceURL.DefaultZone), nil
 }
 
 // 发送心跳
