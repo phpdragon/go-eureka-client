@@ -25,7 +25,7 @@ Spring Cloud Eureka Configurations:
 |instanceEnabledOnInit| √ |
 |renewalIntervalInSecs| √ |
 
-**go-eureka-client** 扩展的特性，见以下列表:
+**go-eureka-client** 支持并扩展的特性，见以下列表:
 
 | 特性 | 支持 |
 |-----------|-------------|

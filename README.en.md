@@ -24,7 +24,7 @@ Spring Cloud Eureka Configurations:
 |instanceEnabledOnInit| √ |
 |renewalIntervalInSecs| √ |
 
-**go-eureka-client** extended features, refer to list below:
+**go-eureka-client** Supported and extended features, refer to list below:
 
 | Feature | Support |
 |-----------|-------------|
