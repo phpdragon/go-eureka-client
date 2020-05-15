@@ -40,10 +40,8 @@ Golang 实现的非官方 Spring Cloud Eureka client.
 #### 使用说明
 
 ```java
-clientConfig, _ := eureka.LoadConfig("etc/app.yaml", false)
-
 // create eureka client
-eurekaClient = eureka.NewClientWithLog(clientConfig, logger.GetLogger())
+eurekaClient = eureka.NewClientWithLog("etc/app.yaml", logger.GetLogger())
 eurekaClient.Run()
 //eurekaClient.Shutdown()
 

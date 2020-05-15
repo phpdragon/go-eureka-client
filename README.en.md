@@ -41,10 +41,8 @@ Supported features, see the following list:
 #### Samples
 
 ```java
-clientConfig, _ := eureka.LoadConfig("etc/app.yaml", false)
-
 // create eureka client
-eurekaClient = eureka.NewClientWithLog(clientConfig, logger.GetLogger())
+eurekaClient = eureka.NewClientWithLog("etc/app.yaml", logger.GetLogger())
 eurekaClient.Run()
 //eurekaClient.Shutdown()
 
