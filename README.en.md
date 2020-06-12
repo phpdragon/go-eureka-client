@@ -62,13 +62,16 @@ Spring Cloud Eureka Configurations:
 
 ```java
 // create eureka client
-eurekaClient = eureka.NewClientWithLog("etc/app.yaml", logger.GetLogger())
+eurekaClient = eureka.NewClientWithLog("app.yaml", logger.GetLogger())
 eurekaClient.Run()
 //eurekaClient.Shutdown()
 
+//httpUrl, _ := eurekaClient.GetRealHttpUrl("http://DEMO/action")
+//fmt.Println(httpUrl)
+
 // http server
 http.HandleFunc("/actuator/info", func(writer http.ResponseWriter, request *http.Request) {
-	writeJsonResponse(writer, request, eureka.ActuatorStatus(8080, "go-example"), true)
+	writeJsonResponse(writer, request, eureka.ActuatorStatus(), true)
 })
 http.HandleFunc("/actuator/health", func(writer http.ResponseWriter, request *http.Request) {
 	writeJsonResponse(writer, request, eureka.ActuatorHealth(), true)
