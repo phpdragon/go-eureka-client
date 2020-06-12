@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/phpdragon/go-eureka-client/core"
 	netUtil "github.com/phpdragon/go-eureka-client/netutil"
+	"math/rand"
 	"strings"
 	"time"
 )
@@ -17,10 +18,23 @@ func (client *Client) Api() (*core.EurekaServerApi, error) {
 	return api, nil
 }
 
-//TODO:
 // rand to pick service url and new EurekaServerApi instance
 func (client *Client) pickEurekaServerApi() (*core.EurekaServerApi, error) {
-	return core.NewEurekaServerApi(client.config.ServiceURL.DefaultZone), nil
+	if "" == client.config.ServiceURL.DefaultZone {
+		return nil, fmt.Errorf("eureka.serviceUrl.defaultZone no setting!")
+	}
+
+	serviceUrls := strings.Split(client.config.ServiceURL.DefaultZone, ",")
+	serviceUrl := ""
+	if len(serviceUrls) < 2 {
+		serviceUrl = serviceUrls[0]
+	} else {
+		rand.Seed(time.Now().UnixNano())
+		index := rand.Intn(len(serviceUrls))
+		serviceUrl = serviceUrls[index]
+	}
+
+	return core.NewEurekaServerApi(serviceUrl), nil
 }
 
 //刷新服务列表
@@ -179,7 +193,7 @@ func (client *Client) monitorClient() {
 	eurekaIpPort := urls[0]
 
 	go func() {
-		for{
+		for {
 			time.Sleep(time.Duration(60) * time.Second)
 
 			client.reRegistration(eurekaIpPort)
@@ -190,7 +204,7 @@ func (client *Client) monitorClient() {
 }
 
 //重新注册
-func (client *Client) reRegistration(eurekaIpPort string){
+func (client *Client) reRegistration(eurekaIpPort string) {
 	if core.STATUS_UP != client.instance.Status {
 		return
 	}
@@ -201,7 +215,7 @@ func (client *Client) reRegistration(eurekaIpPort string){
 	}
 
 	//存在记录注册记录
-	instance,err := client.apiClient.QuerySpecificAppInstance(client.instance.InstanceId)
+	instance, err := client.apiClient.QuerySpecificAppInstance(client.instance.InstanceId)
 	if nil == err && nil != instance && 0 < len(instance.IpAddr) {
 		return
 	}
@@ -211,7 +225,7 @@ func (client *Client) reRegistration(eurekaIpPort string){
 	err = client.apiClient.RegisterInstance(client.instance.App, client.instance)
 	if err != nil {
 		client.logger.Error(fmt.Sprintf("client re-register failed, err=%s", err.Error()))
-	}else{
+	} else {
 		client.logger.Info("client re-register successfully !")
 	}
 }
