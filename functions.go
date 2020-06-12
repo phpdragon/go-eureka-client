@@ -36,14 +36,12 @@ func (client *Client) GetRealHttpUrl(httpUrl string) (string, error) {
 
 	ipPortMap, err := client.getActiveServiceIpPortByAppId(appName)
 	if nil != err || 0 == len(ipPortMap) {
-		//TODO：文案
 		return "", fmt.Errorf("This %s instances not exist!", appName)
 	}
 
 	//取http还是https的ip:port
 	realIpPorts := ipPortMap[mapKey]
 	if nil == realIpPorts || 0 == len(realIpPorts) {
-		//TODO：文案
 		return "", fmt.Errorf("This %s instances not exist!", appName)
 	}
 
