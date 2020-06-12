@@ -62,7 +62,7 @@ Spring Cloud Eureka Configurations:
 
 ```java
 // create eureka client
-eurekaClient = eureka.NewClientWithLog("app.yaml", logger.GetLogger())
+eurekaClient = eureka.NewClientWithLog("config_sample.yaml", logger.GetLogger())
 eurekaClient.Run()
 //eurekaClient.Shutdown()
 
