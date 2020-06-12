@@ -26,11 +26,12 @@ func (client *Client) pickEurekaServerApi() (*core.EurekaServerApi, error) {
 
 	serviceUrls := strings.Split(client.config.ServiceURL.DefaultZone, ",")
 	serviceUrl := ""
-	if len(serviceUrls) < 2 {
+	total := len(serviceUrls)
+	if total < 2 {
 		serviceUrl = serviceUrls[0]
 	} else {
 		rand.Seed(time.Now().UnixNano())
-		index := rand.Intn(len(serviceUrls))
+		index := rand.Intn(total)
 		serviceUrl = serviceUrls[index]
 	}
 
