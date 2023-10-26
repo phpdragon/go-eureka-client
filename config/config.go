@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	yaml "github.com/go-yaml/yaml"
+	yaml "gopkg.in/yaml.v3"
 	core "github.com/phpdragon/go-eureka-client/core"
 	netUtil "github.com/phpdragon/go-eureka-client/netutil"
 	"io/ioutil"
