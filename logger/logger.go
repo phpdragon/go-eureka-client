@@ -7,67 +7,67 @@ import (
 )
 
 type Logger struct {
-	zapLogger *zap.Logger
+	zapLogger *zap.SugaredLogger
 	baseLog   *log.Logger
 }
 
 // New creates a new Logger Agent
-func NewLogAgent(zapLogger *zap.Logger) *Logger {
+func NewLogAgent(zapLogger *zap.SugaredLogger) *Logger {
 	return &Logger{zapLogger: zapLogger, baseLog: log.New(os.Stderr, "", log.LstdFlags)}
 }
 
-func (log *Logger) Debug(msg string) {
+func (log *Logger) Debug(args ...interface{}) {
 	if nil != log.zapLogger {
-		log.zapLogger.Debug(msg)
+		log.zapLogger.Debug(args)
 	} else {
-		log.baseLog.Println(msg)
+		log.baseLog.Println(args)
 	}
 }
 
-func (log *Logger) Info(msg string) {
+func (log *Logger) Info(args ...interface{}) {
 	if nil != log.zapLogger {
-		log.zapLogger.Info(msg)
+		log.zapLogger.Info(args)
 	} else {
-		log.baseLog.Println(msg)
+		log.baseLog.Println(args)
 	}
 }
 
-func (log *Logger) Warn(msg string) {
+func (log *Logger) Warn(args ...interface{}) {
 	if nil != log.zapLogger {
-		log.zapLogger.Warn(msg)
+		log.zapLogger.Warn(args)
 	} else {
-		log.baseLog.Println(msg)
+		log.baseLog.Println(args)
 	}
 }
 
-func (log *Logger) Error(msg string) {
+func (log *Logger) Error(args ...interface{}) {
 	if nil != log.zapLogger {
-		log.zapLogger.Error(msg)
+		log.zapLogger.Error(args)
 	} else {
-		log.baseLog.Println(msg)
+		log.baseLog.Println(args)
 	}
 }
 
-func (log *Logger) Panic(msg string) {
+func (log *Logger) Panic(args ...interface{}) {
 	if nil != log.zapLogger {
-		log.zapLogger.Panic(msg)
+		log.zapLogger.Panic(args)
 	} else {
-		log.baseLog.Panic(msg)
+		log.baseLog.Panic(args)
 	}
 }
 
-func (log *Logger) DPanic(msg string) {
+func (log *Logger) DPanic(args ...interface{}) {
 	if nil != log.zapLogger {
-		log.zapLogger.DPanic(msg)
+		log.zapLogger.DPanic(args)
 	} else {
-		log.baseLog.Println(msg)
+		log.baseLog.Println(args)
 	}
 }
 
-func (log *Logger) Fatal(msg string) {
+func (log *Logger) Fatal(args ...interface{}) {
 	if nil != log.zapLogger {
-		log.zapLogger.Fatal(msg)
+		log.zapLogger.Fatal(args)
 	} else {
-		log.baseLog.Fatal(msg)
+		log.baseLog.Fatal(args)
 	}
 }

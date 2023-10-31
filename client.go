@@ -71,7 +71,7 @@ func NewClient(configPath string) *Client {
 	return NewClientWithLog(configPath, nil)
 }
 
-func NewClientWithLog(configPath string, zapLog *zap.Logger) *Client {
+func NewClientWithLog(configPath string, zapLog *zap.SugaredLogger) *Client {
 	logger := logger.NewLogAgent(zapLog)
 
 	eurekaConfig, err := config.LoadConfig(configPath, false)
@@ -146,7 +146,8 @@ func (client *Client) Shutdown() {
 
 // for graceful kill. Here handle SIGTERM signal to do sth
 // e.g: kill -TERM $pid
-//      or "ctrl + c" to exit
+//
+//	or "ctrl + c" to exit
 func (client *Client) handleSignal() {
 	if client.signalChan == nil {
 		client.signalChan = make(chan os.Signal)
