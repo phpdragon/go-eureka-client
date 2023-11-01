@@ -124,13 +124,13 @@ func actuatorInfo(client *Client) interface{} {
 	return appStatus
 }
 
-func actuatorHealth(*Client) interface{} {
+func actuatorHealth(_ *Client) interface{} {
 	appHealth := health{}
 	appHealth.Status = "UP"
 	appHealth.Details = details{}
 	return appHealth
 }
 
-func actuatorAny(*Client) interface{} {
+func actuatorAny(_ *Client) interface{} {
 	return new(interface{})
 }
