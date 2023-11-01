@@ -48,6 +48,7 @@ func (client *Client) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ok, _ := regexp.Match(route.path, []byte(r.URL.Path))
 		if ok {
 			client.writeJson(w, r, route.function(client), true)
+			return
 		}
 	}
 	_, _ = w.Write([]byte("404 not found"))
