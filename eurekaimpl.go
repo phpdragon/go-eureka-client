@@ -38,7 +38,7 @@ func (client *Client) pickEurekaServerApi() (*core.EurekaServerApi, error) {
 	return core.NewEurekaServerApi(serviceUrl), nil
 }
 
-//刷新服务列表
+// 刷新服务列表
 func (client *Client) refreshRegistry() {
 	if !client.config.ClientConfig.FetchRegistry {
 		return
@@ -50,7 +50,7 @@ func (client *Client) refreshRegistry() {
 	}
 }
 
-//抓取已注册服务列表
+// 抓取已注册服务列表
 func (client *Client) fetchRegistry() error {
 	client.logger.Info("Fetch registry info")
 
@@ -130,7 +130,7 @@ func (client *Client) registerWithEureka() {
 	go client.monitorClient()
 }
 
-//判断http服务是否已经启动
+// 判断http服务是否已经启动
 func (client *Client) serverIsStarted() bool {
 	port := client.instance.Port.Port
 	if "true" == client.instance.SecurePort.Enabled {
@@ -143,7 +143,7 @@ func (client *Client) serverIsStarted() bool {
 	return used
 }
 
-//更新实例的注册状态
+// 更新实例的注册状态
 func (client *Client) updateInstanceStatus() (bool, error) {
 	client.logger.Info("Update the instance status to UP ...")
 
@@ -185,7 +185,7 @@ func (client *Client) heartbeat() {
 	}
 }
 
-//监控客户端
+// 监控客户端
 func (client *Client) monitorClient() {
 	eurekaUrl := client.config.ServiceURL.DefaultZone
 	eurekaUrl = strings.Replace(eurekaUrl, httpPrefix, "", -1)
@@ -204,7 +204,7 @@ func (client *Client) monitorClient() {
 	}()
 }
 
-//重新注册
+// 重新注册
 func (client *Client) reRegistration(eurekaIpPort string) {
 	if core.STATUS_UP != client.instance.Status {
 		return

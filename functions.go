@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//获取下一个容器
+// 获取下一个容器
 func (client *Client) GetNextServerFromEureka(appId string) (*core.Instance, error) {
 	instanceMap, err := client.getActiveInstancesByAppId(appId)
 	if nil != err {

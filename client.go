@@ -72,25 +72,25 @@ func NewClient(configPath string) *Client {
 }
 
 func NewClientWithLog(configPath string, zapLog *zap.SugaredLogger) *Client {
-	logger := logger.NewLogAgent(zapLog)
+	log := logger.NewLogAgent(zapLog)
 
 	eurekaConfig, err := config.LoadConfig(configPath, false)
 	if err != nil {
-		logger.Error(fmt.Sprintf("LoadConfig %s failed, err=%s", configPath, err.Error()))
+		log.Error(fmt.Sprintf("LoadConfig %s failed, err=%s", configPath, err.Error()))
 		os.Exit(1)
 	}
 
 	//实例化
 	instanceInfo, err := config.NewInstance(eurekaConfig)
 	if err != nil {
-		logger.Error(fmt.Sprintf("NewInstance %s failed, err=%s", eurekaConfig.InstanceConfig.AppName, err.Error()))
+		log.Error(fmt.Sprintf("NewInstance %s failed, err=%s", eurekaConfig.InstanceConfig.AppName, err.Error()))
 		os.Exit(1)
 	}
 
 	client := &Client{
 		//自增器
 		autoIncr:   atomic.NewInt64(0),
-		logger:     logger,
+		logger:     log,
 		signalChan: make(chan os.Signal),
 		//
 		config:   eurekaConfig,

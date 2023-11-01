@@ -55,7 +55,7 @@ func (client *Client) doRefreshByAppId(appId string) error {
 	return nil
 }
 
-//获取有效的实例和链接
+// 获取有效的实例和链接
 func getActiveInstancesAndIpPorts(filterOnlyUpInstances bool, instances []core.Instance) (map[int]*core.Instance, map[int]map[int]string) {
 	instancesX := make(map[int]*core.Instance)
 	//
