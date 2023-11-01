@@ -171,7 +171,6 @@ func (client *Client) handleSignal() {
 			fallthrough
 		case syscall.SIGTERM:
 			client.Shutdown()
-			os.Exit(0)
 		}
 	}
 }
