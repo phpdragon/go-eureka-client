@@ -98,7 +98,7 @@ func (client *Client) toStringByte(v interface{}) ([]byte, error) {
 
 func actuatorLinks(client *Client) interface{} {
 	links := make(map[string]href, 10)
-	url := fmt.Sprintf("http://%s:%s", client.instance.IpAddr, client.config.InstanceConfig.NonSecurePort)
+	url := fmt.Sprintf("http://%s:%d", client.instance.IpAddr, client.config.InstanceConfig.NonSecurePort)
 	links["self"] = href{
 		Href:      url + "/actuator",
 		Templated: false,
