@@ -51,7 +51,8 @@ func (client *Client) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	_, _ = w.Write([]byte("404 not found"))
+
+	client.writeJson(w, r, "404 not found", false)
 }
 
 func (client *Client) writeJson(rw http.ResponseWriter, req *http.Request, response interface{}, isJson bool) {
@@ -97,8 +98,11 @@ func (client *Client) toStringByte(v interface{}) ([]byte, error) {
 
 func actuatorLinks(client *Client) interface{} {
 	links := make(map[string]href, 10)
-
 	url := fmt.Sprintf("http://%s:%s", client.instance.IpAddr, client.config.InstanceConfig.NonSecurePort)
+	links["self"] = href{
+		Href:      url + "/actuator",
+		Templated: false,
+	}
 	links["info"] = href{
 		Href:      url + "/actuator/info",
 		Templated: false,
@@ -107,7 +111,10 @@ func actuatorLinks(client *Client) interface{} {
 		Href:      url + "/actuator/health",
 		Templated: false,
 	}
-	return links
+
+	rsp := make(map[string]map[string]href, 1)
+	rsp["_links"] = links
+	return rsp
 }
 
 func actuatorInfo(client *Client) interface{} {
