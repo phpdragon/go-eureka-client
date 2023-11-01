@@ -158,18 +158,15 @@ func (client *Client) handleSignal() {
 	for {
 		switch <-client.signalChan {
 		case syscall.SIGINT:
-			client.logger.Info(fmt.Sprintf("syscall.SIGINT, instanceId=%s.", client.instance.InstanceId))
 			fallthrough
 		case syscall.SIGKILL:
-			client.logger.Info(fmt.Sprintf("syscall.SIGKILL, instanceId=%s.", client.instance.InstanceId))
 			fallthrough
 		case syscall.SIGHUP:
-			client.logger.Info(fmt.Sprintf("syscall.SIGHUP, instanceId=%s.", client.instance.InstanceId))
 			fallthrough
 		case syscall.SIGQUIT:
-			client.logger.Info(fmt.Sprintf("syscall.SIGQUIT, instanceId=%s.", client.instance.InstanceId))
 			fallthrough
 		case syscall.SIGTERM:
+			client.logger.Info(fmt.Sprintf("syscall kill, instanceId=%s.", client.instance.InstanceId))
 			client.Shutdown()
 		}
 	}
